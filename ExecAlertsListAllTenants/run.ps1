@@ -10,7 +10,7 @@ Get-Tenants | ForEach-Object -Parallel {
     $Table = Get-CIPPTable -TableName 'cachealertsandincidents'
 
     try {
-        $Alerts = New-GraphGetRequest -uri 'https://graph.microsoft.com/beta/security/alerts' -tenantid $domainName -AsApp $true 
+        $Alerts = New-GraphGetRequest -uri 'https://graph.microsoft.com/beta/security/alerts' -tenantid $domainName 
         foreach ($Alert in $Alerts) {
             $GUID = (New-Guid).Guid
             $alertJson = $Alert | ConvertTo-Json
@@ -20,7 +20,7 @@ Get-Tenants | ForEach-Object -Parallel {
                 Tenant       = $domainName
                 PartitionKey = 'alert'
             }
-            Add-AzDataTableEntity @Table -Entity $GraphRequest -Force | Out-Null
+            Add-CIPPAzDataTableEntity @Table -Entity $GraphRequest -Force | Out-Null
 
         }
 
@@ -46,7 +46,7 @@ Get-Tenants | ForEach-Object -Parallel {
             PartitionKey = 'alert'
             Tenant       = $domainName
         }
-        Add-AzDataTableEntity @Table -Entity $GraphRequest -Force | Out-Null
+        Add-CIPPAzDataTableEntity @Table -Entity $GraphRequest -Force | Out-Null
 
 
     }

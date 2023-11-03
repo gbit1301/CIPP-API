@@ -22,7 +22,7 @@ try {
     # Interact with query parameters or the body of the request.
     $TenantFilter = $Request.Query.TenantFilter
     $GraphRequest = if ($TenantFilter -ne 'AllTenants') {
-        $Alerts = New-GraphGetRequest -uri 'https://graph.microsoft.com/beta/security/alerts' -tenantid $TenantFilter -AsApp $true
+        $Alerts = New-GraphGetRequest -uri 'https://graph.microsoft.com/beta/security/alerts' -tenantid $TenantFilter 
         $AlertsObj = foreach ($Alert In $alerts) {
             @{
                 Tenant        = $TenantFilter
@@ -53,7 +53,7 @@ try {
     else {
         $Table = Get-CIPPTable -TableName cachealertsandincidents
         $Filter = "PartitionKey eq 'alert'"
-        $Rows = Get-AzDataTableEntity @Table -filter $Filter | Where-Object -Property Timestamp -GT (Get-Date).AddMinutes(-10)
+        $Rows = Get-CIPPAzDataTableEntity @Table -filter $Filter | Where-Object -Property Timestamp -GT (Get-Date).AddMinutes(-10)
         if (!$Rows) {
             Push-OutputBinding -Name Msg -Value (Get-Date).ToString()
             [PSCustomObject]@{

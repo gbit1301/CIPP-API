@@ -27,14 +27,15 @@ $Tenants = ($Request.body | Select-Object Select_*).psobject.properties.value
 $Results = foreach ($Tenant in $tenants) {
     try {
         $CompleteObject = [PSCustomObject]@{
-            tenant          = $tenant
-            Applicationname = $ChocoApp.ApplicationName
-            assignTo        = $assignTo
-            IntuneBody      = $intunebody
+            tenant             = $tenant
+            Applicationname    = $ChocoApp.ApplicationName
+            assignTo           = $assignTo
+            InstallationIntent = $request.body.InstallationIntent
+            IntuneBody         = $intunebody
         } | ConvertTo-Json -Depth 15
         $Table = Get-CippTable -tablename 'apps'
         $Table.Force = $true
-        Add-AzDataTableEntity @Table -Entity @{
+        Add-CIPPAzDataTableEntity @Table -Entity @{
             JSON         = "$CompleteObject"
             RowKey       = "$((New-Guid).GUID)"
             PartitionKey = "apps"
